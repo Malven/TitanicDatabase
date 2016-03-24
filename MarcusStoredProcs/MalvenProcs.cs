@@ -25,9 +25,23 @@ public class MalvenProcs
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
-
             SqlCommand comm = new SqlCommand();
             comm.CommandText = "INSERT INTO Passenger (Lastname, Firstname, Age, CabinID, Ticket, TicketPrice, CityID, Job) VALUES ('"+ Lastname.ToString() +"', '"+ Firstname.ToString() +"', '"+ Age.ToString() +"',"+  CabinID +", '"+ Ticket.ToString() +"', '"+ TicketPrice.ToString() +"', "+ CityID +", '"+ Job.ToString() +"') ";
+            comm.Connection = conn;
+
+            conn.Open();
+            comm.ExecuteNonQuery();
+            conn.Close();
+        }
+    }
+
+    [Microsoft.SqlServer.Server.SqlProcedure]
+    public static void InsertCrew(SqlInt32 CrewID, SqlString Lastname, SqlString Firstname, SqlInt32 Age, SqlInt32 DepartmentID, SqlInt32 CityID, SqlString Job, SqlInt32 ClassID)
+    {
+        using (SqlConnection conn = new SqlConnection("context connection=true"))
+        {
+            SqlCommand comm = new SqlCommand();
+            comm.CommandText = "INSERT INTO Crew (CrewID, Lastname, Firstname, Age, DepartmentID, CityID, Job, ClassID) VALUES (" + CrewID + ",'" + Lastname.ToString() + "', '" + Firstname.ToString() + "', " + Age + "," + DepartmentID + ", " + CityID + ", '" + Job.ToString() + "', "+ClassID+") ";
             comm.Connection = conn;
 
             conn.Open();
