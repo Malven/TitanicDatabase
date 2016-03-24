@@ -20,7 +20,7 @@ using Microsoft.SqlServer.Server;
 
 public class MalvenProcs
 {
-    [Microsoft.SqlServer.Server.SqlProcedure]
+    [SqlProcedure]
     public static void InsertPassenger(SqlString Lastname, SqlString Firstname, SqlString Age, SqlInt32 CabinID, SqlString Ticket, SqlString TicketPrice, SqlInt32 CityID, SqlString Job )
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
@@ -32,10 +32,12 @@ public class MalvenProcs
             conn.Open();
             comm.ExecuteNonQuery();
             conn.Close();
+            conn.Dispose();
+            comm.Dispose();
         }
     }
 
-    [Microsoft.SqlServer.Server.SqlProcedure]
+    [SqlProcedure]
     public static void InsertCrew(SqlInt32 CrewID, SqlString Lastname, SqlString Firstname, SqlInt32 Age, SqlInt32 DepartmentID, SqlInt32 CityID, SqlString Job, SqlInt32 ClassID)
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
@@ -47,6 +49,83 @@ public class MalvenProcs
             conn.Open();
             comm.ExecuteNonQuery();
             conn.Close();
+            conn.Dispose();
+            comm.Dispose();
+        }
+    }
+
+    [SqlProcedure]
+    public static void GetAllInCrew()
+    {
+        using (SqlConnection conn = new SqlConnection("context connection=true"))
+        {
+            SqlCommand comm = new SqlCommand();
+            comm.CommandText = "SELECT * FROM Crew";
+            comm.Connection = conn;
+
+            conn.Open();
+            SqlContext.Pipe.ExecuteAndSend(comm);
+            conn.Close();
+            conn.Dispose();
+            comm.Dispose();
+        }
+    }
+
+    [SqlProcedure]
+    public static void GetCrewFromCity( SqlInt32 CityID )
+    {
+        using (SqlConnection conn = new SqlConnection("context connection=true"))
+        {
+            SqlCommand comm = new SqlCommand();
+            comm.CommandText = "SELECT Crew.CrewID" +
+                              ",Crew.Lastname" +
+                              ",Crew.Firstname" +
+                              ",Crew.Age" +
+                              ",Department.DepartmentDescription" +
+                              ",DepartCity.cityName" +
+                              ",Crew.Job" +
+                              ",Class.ClassDescription " +
+                              "FROM Crew " +
+                              "JOIN Department ON Crew.DepartmentID = Department.DepartmentID " +
+                              "JOIN DepartCity ON Crew.CityID = DepartCity.cityID " +
+                              "JOIN Class ON Crew.ClassID = Class.ClassID " +
+                              "WHERE Crew.CityID = " + CityID;
+            comm.Connection = conn;
+
+            conn.Open();
+            SqlContext.Pipe.ExecuteAndSend(comm);
+            conn.Close();
+            conn.Dispose();
+            comm.Dispose();
+        }
+    }
+
+    [SqlProcedure]
+    public static void GetPassengerFromCity(SqlInt32 CityID)
+    {
+        using (SqlConnection conn = new SqlConnection("context connection=true"))
+        {
+            SqlCommand comm = new SqlCommand();
+            comm.CommandText = "SELECT Passenger.PassengerID" +
+                              ",Passenger.Lastname" +
+                              ",Passenger.Firstname" +
+                              ",Passenger.Age" +
+                              ",Cabin.CabinDescription" +
+                              ",DepartCity.cityName" +
+                              ",Passenger.Job" +
+                              ",Class.ClassDescription " +
+                              "FROM Passenger " +
+                              "JOIN Cabin ON Cabin.CabinID = Passenger.CabinID " +
+                              "JOIN DepartCity ON Passenger.CityID = DepartCity.cityID " +
+                              "JOIN Class ON Cabin.ClassID = Class.ClassID " +
+                              "WHERE Passenger.CityID = " + CityID;
+            comm.Connection = conn;
+
+            conn.Open();
+            SqlContext.Pipe.ExecuteAndSend(comm);
+            conn.Close();
+            conn.Dispose();
+            comm.Dispose();
         }
     }
 }
