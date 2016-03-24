@@ -63,7 +63,30 @@ public class LambrantSprocs
                                 "cab.CabinPrice " + 
                                 "FROM Passenger AS p " +
                                 "INNER JOIN Cabin AS cab ON cab.CabinID = p.CabinID " +
-                                "WHERE p.Lastname = " + name.ToString() + " ;";
+                                "WHERE p.Lastname = '" + name.ToString() + "';";
+
+            comm.Connection = conn;
+            conn.Open();
+            //comm.ExecuteNonQuery();
+            SqlContext.Pipe.ExecuteAndSend(comm);
+            conn.Close();
+            conn.Dispose();
+            comm.Dispose();
+        }
+    }
+
+    [Microsoft.SqlServer.Server.SqlProcedure]
+    public static void CrewDepartment(SqlString name)
+    {
+        using (SqlConnection conn = new SqlConnection("context connection=true"))
+        {
+            SqlCommand comm = new SqlCommand();
+
+
+            comm.CommandText = "SELECT c.Lastname, c.Firstname, d.DepartmentDescription " +
+                                "FROM Crew AS c " +
+                                "INNER JOIN Department AS d ON d.DepartmentID = c.DepartmentID " +
+                                "WHERE c.Lastname = '" + name.ToString() + "';";
 
             comm.Connection = conn;
             conn.Open();
