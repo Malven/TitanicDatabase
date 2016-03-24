@@ -97,4 +97,27 @@ public class LambrantSprocs
             comm.Dispose();
         }
     }
+
+    [Microsoft.SqlServer.Server.SqlProcedure]
+    public static void CrewClass(SqlString name)
+    {
+        using (SqlConnection conn = new SqlConnection("context connection=true"))
+        {
+            SqlCommand comm = new SqlCommand();
+
+
+            comm.CommandText = "SELECT c.Lastname, c.Firstname, cl.ClassDescription AS WorkedFor " +
+                                "FROM Crew AS c " + 
+                                "INNER JOIN Class AS cl ON cl.ClassID = c.ClassID " +
+                                "WHERE c.Lastname = '" + name.ToString() + "';";
+
+            comm.Connection = conn;
+            conn.Open();
+            //comm.ExecuteNonQuery();
+            SqlContext.Pipe.ExecuteAndSend(comm);
+            conn.Close();
+            conn.Dispose();
+            comm.Dispose();
+        }
+    }
 }
