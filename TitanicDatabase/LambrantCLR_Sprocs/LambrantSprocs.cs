@@ -10,28 +10,31 @@ using Microsoft.SqlServer.Server;
 public class LambrantSprocs
 {
     [Microsoft.SqlServer.Server.SqlProcedure]
-    public static SqlInt32 SearchByAge(SqlInt32 age)
+    public static SqlInt32 SearchByAge(SqlString age)
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
 
-            if (age < 0 || age > 120)
-                return 0;
+            //int temp;
+            //bool isNum = int.TryParse(age.ToString(), out temp);
 
-            comm.CommandText = "SELECT p.Lastname, p.Firstname, p.Age" + 
+            //if (age < "0" || age > "120" || age == "" || !isNum)
+            //    return 0;
+
+            comm.CommandText = "SELECT p.Lastname, p.Firstname, p.Age" +
                                 "FROM Passenger AS p" +
-                                "WHERE p.Age < " + age + ";" +
+                                "WHERE p.Age < " + age.ToString() + ";" +
                                 "SELECT cr.Lastname, cr.Firstname, cr.Age" +
                                 "FROM Crew AS cr" + 
-                                "WHERE cr.Age < " + age + ";";
+                                "WHERE cr.Age < " + age.ToString() + ";";
 
             comm.Connection = conn;
             conn.Open();
-            comm.ExecuteNonQuery();
+            //comm.ExecuteNonQuery();
+            SqlContext.Pipe.ExecuteAndSend(comm);
             conn.Close();
             return 1;
         }
     }
-
 }
