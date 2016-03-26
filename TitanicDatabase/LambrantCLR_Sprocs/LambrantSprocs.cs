@@ -91,25 +91,35 @@ public class LambrantSprocs
     }
 
     [Microsoft.SqlServer.Server.SqlProcedure]
-    public static void CrewDepartment(SqlString name)
+    public static SqlInt32 CrewDepartment(SqlString name)
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
 
+            int temp;
+            bool isNum = int.TryParse(name.ToString(), out temp);
 
-            comm.CommandText = "SELECT c.Lastname, c.Firstname, d.DepartmentDescription " +
+            if (name.ToString() == null || isNum)
+            {
+                return 0;
+            }
+            else
+            {
+                comm.CommandText = "SELECT c.Lastname, c.Firstname, d.DepartmentDescription AS Department, c.Job " +
                                 "FROM Crew AS c " +
                                 "INNER JOIN Department AS d ON d.DepartmentID = c.DepartmentID " +
                                 "WHERE c.Lastname = '" + name.ToString() + "';";
 
-            comm.Connection = conn;
-            conn.Open();
-            //comm.ExecuteNonQuery();
-            SqlContext.Pipe.ExecuteAndSend(comm);
-            conn.Close();
-            conn.Dispose();
-            comm.Dispose();
+                comm.Connection = conn;
+                conn.Open();
+                //comm.ExecuteNonQuery();
+                SqlContext.Pipe.ExecuteAndSend(comm);
+                conn.Close();
+                conn.Dispose();
+                comm.Dispose();
+                return 1;
+            }
         }
     }
 
