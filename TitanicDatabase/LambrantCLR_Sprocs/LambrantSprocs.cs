@@ -22,32 +22,37 @@ using Microsoft.SqlServer.Server;
 public class LambrantSprocs
 {
     [Microsoft.SqlServer.Server.SqlProcedure]
-    public static void SearchByAge(SqlString age)
+    public static SqlInt32 SearchByAge(SqlString age)
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
 
-            //int temp;
-            //bool isNum = int.TryParse(age.ToString(), out temp);
+            int tempAge;
+            bool isNum = int.TryParse(age.ToString(), out tempAge);
 
-            //if (age < "0" || age > "120" || age == "" || !isNum)
-            //    return 0;
+            if (tempAge < 0 || tempAge > 120 || !isNum)
+            {
+                return 0;
+            }
+            else
+            {
+                comm.CommandText = "SELECT Lastname, Firstname, Age " +
+                                    "FROM Passenger " +
+                                    "WHERE Age = " + age.ToString() + ";" +
+                                    "SELECT Lastname, Firstname, Age " +
+                                    "FROM Crew " +
+                                    "WHERE Age = " + age.ToString() + ";";
 
-            comm.CommandText = "SELECT Lastname, Firstname, Age " +
-                                "FROM Passenger " +
-                                "WHERE Age = " + age.ToString() + ";" +
-                                "SELECT Lastname, Firstname, Age " +
-                                "FROM Crew " +
-                                "WHERE Age = " + age.ToString() + ";";
-
-            comm.Connection = conn;
-            conn.Open();
-            //comm.ExecuteNonQuery();
-            SqlContext.Pipe.ExecuteAndSend(comm);
-            conn.Close();
-            conn.Dispose();
-            comm.Dispose();
+                comm.Connection = conn;
+                conn.Open();
+                //comm.ExecuteNonQuery();
+                SqlContext.Pipe.ExecuteAndSend(comm);
+                conn.Close();
+                conn.Dispose();
+                comm.Dispose();
+                return 1;
+            }            
         }
     }
 
