@@ -124,25 +124,38 @@ public class LambrantSprocs
     }
 
     [Microsoft.SqlServer.Server.SqlProcedure]
-    public static void CrewClass(SqlString name)
+    public static SqlInt32 CrewClass(SqlString name)
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
 
+            int temp;
+            bool isNum = int.TryParse(name.ToString(), out temp);
 
-            comm.CommandText = "SELECT c.Lastname, c.Firstname, cl.ClassDescription AS WorkedFor " +
-                                "FROM Crew AS c " + 
-                                "INNER JOIN Class AS cl ON cl.ClassID = c.ClassID " +
-                                "WHERE c.Lastname = '" + name.ToString() + "';";
-
-            comm.Connection = conn;
-            conn.Open();
-            //comm.ExecuteNonQuery();
-            SqlContext.Pipe.ExecuteAndSend(comm);
-            conn.Close();
-            conn.Dispose();
-            comm.Dispose();
+            if (name.ToString() == null || isNum)
+            {
+                return 0;
+            }
+            else
+            {
+                comm.CommandText = "SELECT c.Lastname, c.Firstname, cl.ClassDescription AS WorkedFor, c.Job AS WorkedAs " +
+                                   "FROM Crew AS c " +
+                                   "LEFT JOIN Class AS cl ON cl.ClassID = c.ClassID " +
+                                   "WHERE c.Lastname = '" + name.ToString() + "' " +
+                                   "AND c.ClassID IS NULL OR " +
+                                   "c.Lastname = '" + name.ToString() + "' " +
+                                   "AND c.ClassID IS NOT NULL;";
+                
+                comm.Connection = conn;
+                conn.Open();
+                //comm.ExecuteNonQuery();
+                SqlContext.Pipe.ExecuteAndSend(comm);
+                conn.Close();
+                conn.Dispose();
+                comm.Dispose();
+                return 1;
+            }
         }
     }
 }
