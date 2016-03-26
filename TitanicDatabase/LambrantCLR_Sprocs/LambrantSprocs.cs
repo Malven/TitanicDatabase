@@ -57,26 +57,36 @@ public class LambrantSprocs
     }
 
     [Microsoft.SqlServer.Server.SqlProcedure]
-    public static void CabinPassenger(SqlString name)
+    public static SqlInt32 CabinPassenger(SqlString name)
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
-            
 
-            comm.CommandText = "SELECT p.Lastname, p.Firstname, cab.CabinDescription, " +
-                                "cab.CabinPrice " + 
-                                "FROM Passenger AS p " +
-                                "INNER JOIN Cabin AS cab ON cab.CabinID = p.CabinID " +
-                                "WHERE p.Lastname = '" + name.ToString() + "';";
+            int temp;
+            bool isNum = int.TryParse(name.ToString(), out temp);
 
-            comm.Connection = conn;
-            conn.Open();
-            //comm.ExecuteNonQuery();
-            SqlContext.Pipe.ExecuteAndSend(comm);
-            conn.Close();
-            conn.Dispose();
-            comm.Dispose();
+            if (name.ToString() == null || isNum)
+            {
+                return 0;
+            }
+            else
+            {
+                comm.CommandText = "SELECT p.Lastname, p.Firstname, cab.CabinDescription, " +
+                                   "cab.CabinPrice " +
+                                   "FROM Passenger AS p " +
+                                   "INNER JOIN Cabin AS cab ON cab.CabinID = p.CabinID " +
+                                   "WHERE p.Lastname = '" + name.ToString() + "';";
+
+                comm.Connection = conn;
+                conn.Open();
+                //comm.ExecuteNonQuery();
+                SqlContext.Pipe.ExecuteAndSend(comm);
+                conn.Close();
+                conn.Dispose();
+                comm.Dispose();
+                return 1;
+            }            
         }
     }
 
