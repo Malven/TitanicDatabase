@@ -37,10 +37,10 @@ public class LambrantSprocs
             }
             else
             {
-                comm.CommandText = "SELECT Lastname, Firstname, Age " +
+                comm.CommandText = "SELECT COALESCE(COALESCE(Lastname + ', ', '') + Firstname, Lastname) AS FullName, Age " +
                                     "FROM Passenger " +
                                     "WHERE Age = " + age.ToString() + " UNION ALL " +
-                                    "SELECT Lastname, Firstname, Age " +
+                                    "SELECT COALESCE(COALESCE(Lastname + ', ', '') + Firstname, Lastname) AS FullName, Age " +
                                     "FROM Crew " +
                                     "WHERE Age = " + age.ToString() + ";";
 
@@ -72,7 +72,7 @@ public class LambrantSprocs
             }
             else
             {
-                comm.CommandText = "SELECT p.Lastname, p.Firstname, cab.CabinDescription, " +
+                comm.CommandText = "SELECT COALESCE(COALESCE(p.Lastname + ', ', '') + p.Firstname, p.Lastname) AS FullName, cab.CabinDescription, " +
                                    "cab.CabinPrice " +
                                    "FROM Passenger AS p " +
                                    "INNER JOIN Cabin AS cab ON cab.CabinID = p.CabinID " +
@@ -100,13 +100,28 @@ public class LambrantSprocs
             int temp;
             bool isNum = int.TryParse(name.ToString(), out temp);
 
-            if (name.ToString() == null || isNum)
+            if (name.ToString() == "")
+            {
+                comm.CommandText = "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, d.DepartmentDescription AS Department, c.Job " + 
+                                   "FROM Crew AS c " +
+                                   "INNER JOIN Department AS d ON d.DepartmentID = c.DepartmentID";
+
+                comm.Connection = conn;
+                conn.Open();
+                //comm.ExecuteNonQuery();
+                SqlContext.Pipe.ExecuteAndSend(comm);
+                conn.Close();
+                conn.Dispose();
+                comm.Dispose();
+                return 1;
+            }
+            else if (name.ToString() == null || isNum)
             {
                 return 0;
             }
             else
             {
-                comm.CommandText = "SELECT c.Lastname, c.Firstname, d.DepartmentDescription AS Department, c.Job " +
+                comm.CommandText = "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, d.DepartmentDescription AS Department, c.Job " +
                                 "FROM Crew AS c " +
                                 "INNER JOIN Department AS d ON d.DepartmentID = c.DepartmentID " +
                                 "WHERE c.Lastname = '" + name.ToString() + "';";
@@ -139,14 +154,14 @@ public class LambrantSprocs
             }
             else
             {
-                comm.CommandText = "SELECT c.Lastname, c.Firstname, cl.ClassDescription AS WorkedFor, c.Job AS WorkedAs " +
+                comm.CommandText = "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, cl.ClassDescription AS WorkedFor, c.Job AS WorkedAs " +
                                    "FROM Crew AS c " +
                                    "LEFT JOIN Class AS cl ON cl.ClassID = c.ClassID " +
                                    "WHERE c.Lastname = '" + name.ToString() + "' " +
                                    "AND c.ClassID IS NULL OR " +
                                    "c.Lastname = '" + name.ToString() + "' " +
                                    "AND c.ClassID IS NOT NULL;";
-                
+
                 comm.Connection = conn;
                 conn.Open();
                 //comm.ExecuteNonQuery();
