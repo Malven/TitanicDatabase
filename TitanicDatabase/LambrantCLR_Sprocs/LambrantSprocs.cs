@@ -39,7 +39,7 @@ public class LambrantSprocs
             {
                 comm.CommandText = "SELECT Lastname, Firstname, Age " +
                                     "FROM Passenger " +
-                                    "WHERE Age = " + age.ToString() + ";" +
+                                    "WHERE Age = " + age.ToString() + " UNION ALL " +
                                     "SELECT Lastname, Firstname, Age " +
                                     "FROM Crew " +
                                     "WHERE Age = " + age.ToString() + ";";
