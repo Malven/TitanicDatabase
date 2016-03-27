@@ -4,27 +4,28 @@ using System.Data.SqlTypes;
 using System.Text;
 
 
-public class Passenger
+public class Crew
 {
+    public SqlInt32 CrewID { get; set; }
     public SqlString Firstname { get; set; }
     public SqlString Lastname { get; set; }
-    public SqlString Age { get; set; }
-    public SqlInt32? CabinID { get; set; }
-    public SqlString? Ticket { get; set; }
-    public SqlString? TicketPrice { get; set; }
+    public SqlInt32 Age { get; set; }
+    public SqlInt32? DepartmentID { get; set; }
     public SqlInt32? CityID { get; set; }
     public SqlString? Job { get; set; }
+    public SqlInt32? ClassID { get; set; }
 
-    public Passenger(SqlString _firstname, SqlString _lastname, SqlString _age, SqlInt32 _cabinID, SqlString _ticket, SqlString _ticketPrice, SqlInt32 _cityID, SqlString _job )
+    public Crew(SqlString _firstname, SqlString _lastname, SqlInt32 _age, SqlInt32 _departmentID, SqlInt32 _cityID, SqlString _job, SqlInt32 _classID )
     {
+        Random rnd = new Random(1234);
+        CrewID = DateTime.Now.Year + rnd.Next();
         Firstname = _firstname;
         Lastname = _lastname;
         Age = _age;
-        CabinID = _cabinID;
-        Ticket = _ticket;
-        TicketPrice = _ticketPrice;
+        DepartmentID = _departmentID;
         CityID = _cityID;
         Job = _job;
+        ClassID = _classID;
     }
     public bool CheckInputs()
     {
