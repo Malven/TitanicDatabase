@@ -66,11 +66,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MalvenProcs\MalvenProcs.cs" />
+    <Compile Include="MalvenProcs\Crew.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TitanicDatabaseMarcus.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MalvenProcs\Passenger.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="MalvenProcs\FixDefaults.sql" />
   </ItemGroup>
 </Project>

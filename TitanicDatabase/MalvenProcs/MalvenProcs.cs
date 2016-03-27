@@ -4,29 +4,40 @@ using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using Microsoft.SqlServer.Server;
 /*
-- Add a passenger/crewmember if they find that their relative is missing from the database.
+- Add a passenger/crewmember if they find that their relative is missing from the database. DONE
 
-- Look up which city their relative deported from.
+- Look up which city their relative deported from. DONE
 
-- Look up which class their relative traveled with.
+- Look up which class their relative traveled with. DONE
 
-- Check which of all the other passengers traveled in the same class as their relative.
+- Check which of all the other passengers traveled in the same class as their relative. DONE 
+
+    B. Alla era frågor ska vara i form av stored procedures, era frågor ska innehålla
+    variabler (DONE), vilkor(DONE) och loopar(DONE-ISH)
+
+    C. Vissa av era stored procedures ska ha in parametrar, och vissa av de ska ha
+    möjlighet att inte behöva skicka med ett argument för en viss parameter. Så att
+    ni inte tvingar användare att tillhanda värden för alla argument i en stored
+    procedures. DONE
+
+    D. Ni ska använda er av aggregat funktioner där det behövs för er business case. DONE
 */
 public partial class StoredProcedures
 {
-    [Microsoft.SqlServer.Server.SqlProcedure]
-    public static SqlInt32 InsertPassenger(SqlString Lastname, SqlString Firstname, SqlString Age, SqlInt32? CabinID = null, SqlString? Ticket = null, SqlString? TicketPrice = null, SqlInt32? CityID = null, SqlString? Job = null)
+    [SqlProcedure]
+    public static SqlInt32 InsertPassenger(SqlString Lastname, SqlString Firstname, SqlString Age, SqlInt32 CabinID, SqlString Ticket, SqlString TicketPrice, SqlInt32 CityID, SqlString Job )
     {
-        if(!CheckInputs(Lastname, Firstname, Age))
+        Passenger newPassenger = new Passenger(Firstname, Lastname, Age, CabinID, Ticket, TicketPrice, CityID, Job);
+
+        if(newPassenger.CheckInputs())
             return 0;
-        
 
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
-            comm.CommandText = "INSERT INTO Passenger (Lastname, Firstname, Age, CabinID, Ticket, TicketPrice, CityID, Job) VALUES ('" + Lastname.ToString() + "', '" + Firstname.ToString() + "', '" + Age.ToString() + "'," + CabinID + ", '" + Ticket.ToString() + "', '" + TicketPrice.ToString() + "', " + CityID + ", '" + Job.ToString() + "') ";
+            comm.CommandText = "INSERT INTO Passenger (Lastname, Firstname, Age, CabinID, Ticket, TicketPrice, CityID, Job) VALUES ('" + newPassenger.Lastname.ToString() + "', '" + newPassenger.Firstname.ToString() + "', '" + newPassenger.Age.ToString() + "'," + newPassenger.CabinID + ", '" + newPassenger.Ticket.ToString() + "', '" + newPassenger.TicketPrice.ToString() + "', " + CityID + ", '" + Job.ToString() + "') ";
             comm.Connection = conn;
-
+            comm.Parameters.Add(new SqlParameter("test", SqlInt32.Null));
             conn.Open();
             comm.ExecuteNonQuery();
             conn.Close();
@@ -37,16 +48,17 @@ public partial class StoredProcedures
     }
 
     [SqlProcedure]
-    public static SqlInt32 InsertCrew(SqlInt32 CrewID, SqlString Lastname, SqlString Firstname, SqlInt32 Age, SqlInt32 DepartmentID, SqlInt32 CityID, SqlString Job, SqlInt32 ClassID)
+    public static SqlInt32 InsertCrew(SqlString Lastname, SqlString Firstname, SqlInt32 Age, SqlInt32 DepartmentID, SqlInt32 CityID, SqlString Job, SqlInt32 ClassID)
     {
+        Crew newCrew = new Crew(Firstname, Lastname, Age, DepartmentID, CityID, Job, ClassID);
 
-        if (!CheckInputs(Lastname, Firstname, Age.ToSqlString()))
-            return 0;
+        if (newCrew.CheckInputs())
+            return 0;        
 
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
-            comm.CommandText = "INSERT INTO Crew (CrewID, Lastname, Firstname, Age, DepartmentID, CityID, Job, ClassID) VALUES (" + CrewID + ",'" + Lastname.ToString() + "', '" + Firstname.ToString() + "', " + Age + "," + DepartmentID + ", " + CityID + ", '" + Job.ToString() + "', " + ClassID + ") ";
+            comm.CommandText = "INSERT INTO Crew (CrewID, Lastname, Firstname, Age, DepartmentID, CityID, Job, ClassID) VALUES (" + newCrew.CrewID + ",'" + newCrew.Lastname.ToString() + "', '" + newCrew.Firstname.ToString() + "', " + newCrew.Age + "," + newCrew.DepartmentID + ", " + newCrew.CityID + ", '" + newCrew.Job.ToString() + "', " + newCrew.ClassID + ") ";
             comm.Connection = conn;
 
             conn.Open();
@@ -64,7 +76,19 @@ public partial class StoredProcedures
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
-            comm.CommandText = "SELECT * FROM Crew";
+            comm.CommandText = "SELECT Crew.CrewID" +
+                              ",CONCAT(Crew.Firstname, ' '" +
+                              ",Crew.Lastname) AS 'Full name'" +
+                              ",Crew.Age" +
+                              ",Department.DepartmentDescription" +
+                              ",DepartCity.cityName" +
+                              ",Crew.Job" +
+                              ",Class.ClassDescription " +
+                              "FROM Crew " +
+                              "JOIN Department ON Crew.DepartmentID = Department.DepartmentID " +
+                              "JOIN DepartCity ON Crew.CityID = DepartCity.cityID " +
+                              "JOIN Class ON Crew.ClassID = Class.ClassID " +
+                              "SELECT COUNT(*) as '# in Crew' FROM Crew";
             comm.Connection = conn;
 
             conn.Open();
@@ -82,8 +106,8 @@ public partial class StoredProcedures
         {
             SqlCommand comm = new SqlCommand();
             comm.CommandText = "SELECT Crew.CrewID" +
-                              ",Crew.Lastname" +
-                              ",Crew.Firstname" +
+                              ",CONCAT(Crew.Firstname, ' '" +
+                              ",Crew.Lastname) AS 'Full name'" +
                               ",Crew.Age" +
                               ",Department.DepartmentDescription" +
                               ",DepartCity.cityName" +
@@ -110,8 +134,8 @@ public partial class StoredProcedures
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
-            comm.CommandText = "SELECT Passenger.PassengerID" +
-                              ",Passenger.Lastname" +
+            comm.CommandText = "SELECT CONCAT(Passenger.Firstname, ' '" +
+                              ",Passenger.Lastname) AS 'Full name'" +
                               ",Passenger.Firstname" +
                               ",Passenger.Age" +
                               ",Cabin.CabinDescription" +
@@ -133,17 +157,80 @@ public partial class StoredProcedures
         }
     }
 
-    private static bool CheckInputs(SqlString Lastname, SqlString Firstname, SqlString Age)
+    [SqlProcedure]
+    public static void GetClassOfPassenger(SqlString Firstname, SqlString Lastname)
     {
-        int tempAge;
-        bool isNum = int.TryParse(Age.ToString(), out tempAge);
+        using (SqlConnection conn = new SqlConnection("context connection=true"))
+        {
+            SqlCommand comm = new SqlCommand();
+            comm.CommandText = "SELECT CONCAT(Passenger.Firstname, ' '" +
+                              ",Passenger.Lastname) AS 'Full name'" +
+                              ",Passenger.Age" +
+                              ",Cabin.CabinDescription" +
+                              ",DepartCity.cityName" +
+                              ",Class.ClassDescription " +
+                              ",Class.ClassID " +
+                              "FROM Passenger " +
+                              "JOIN Cabin ON Cabin.CabinID = Passenger.CabinID " +
+                              "JOIN DepartCity ON Passenger.CityID = DepartCity.cityID " +
+                              "JOIN Class ON Cabin.ClassID = Class.ClassID " +
+                              "WHERE Passenger.Firstname LIKE '%" + Firstname.ToString() + "%' AND Passenger.Lastname LIKE '%" + Lastname.ToString() + "%'";
+            comm.Connection = conn;
 
-        if (tempAge < 0 || tempAge > 120 || !isNum)
-            return false;
+            conn.Open();
+            SqlContext.Pipe.ExecuteAndSend(comm);
+            conn.Close();
+            conn.Dispose();
+            comm.Dispose();
+        }
+    }
 
-        if (Firstname == "" || Lastname == "")
-            return false;
+    [SqlProcedure]
+    public static void GetClassOfPassengers(SqlString Firstname, SqlString Lastname)
+    {
+        SqlConnection conn = new SqlConnection("Context Connection=true");
+        conn.Open();
+        SqlCommand getPassCommand = new SqlCommand("SELECT TOP(1) Passenger.Lastname" +
+                              ",Passenger.Firstname" +
+                              ",Passenger.Age" +
+                              ",Cabin.CabinDescription" +
+                              ",DepartCity.cityName" +
+                              ",Class.ClassDescription " +
+                              ",Class.ClassID " +
+                              "FROM Passenger " +
+                              "JOIN Cabin ON Cabin.CabinID = Passenger.CabinID " +
+                              "JOIN DepartCity ON Passenger.CityID = DepartCity.cityID " +
+                              "JOIN Class ON Cabin.ClassID = Class.ClassID " +
+                              "WHERE Passenger.Firstname LIKE '%" + Firstname.ToString() + "%' AND Passenger.Lastname LIKE '%" + Lastname.ToString() + "%'", conn);
 
-        return true;
+        SqlDataReader getPassengerRdr = getPassCommand.ExecuteReader();
+
+        string _classID = "";
+
+        while (getPassengerRdr.Read())
+        {
+             _classID = getPassengerRdr["ClassID"].ToString();
+        }
+        
+        conn.Close();
+        
+        SqlCommand comm = new SqlCommand();
+        comm.CommandText = "SELECT CONCAT(Passenger.Firstname, ' '" + 
+                          ",Passenger.Lastname) AS 'Full name'" +
+                          ",Passenger.Age" +
+                          ",Cabin.CabinDescription" +
+                          ",DepartCity.cityName" +
+                          ",Class.ClassDescription " +
+                          "FROM Passenger " +
+                          "JOIN Cabin ON Cabin.CabinID = Passenger.CabinID " +
+                          "JOIN DepartCity ON Passenger.CityID = DepartCity.cityID " +
+                          "JOIN Class ON Cabin.ClassID = Class.ClassID " +
+                          "WHERE Class.ClassID = " + SqlInt32.Parse(_classID);
+        comm.Connection = conn;
+        conn.Open();
+        SqlContext.Pipe.ExecuteAndSend(comm);
+        conn.Close();
+        conn.Dispose();
+        comm.Dispose();
     }
 }
