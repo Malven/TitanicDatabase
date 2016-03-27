@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using Microsoft.SqlServer.Server;
-
 /*
 - Add a passenger/crewmember if they find that their relative is missing from the database.
 
@@ -17,16 +12,19 @@ using Microsoft.SqlServer.Server;
 
 - Check which of all the other passengers traveled in the same class as their relative.
 */
-
-public class MalvenProcs
+public partial class StoredProcedures
 {
-    [SqlProcedure]
-    public static void InsertPassenger(SqlString Lastname, SqlString Firstname, SqlString Age, SqlInt32 CabinID, SqlString Ticket, SqlString TicketPrice, SqlInt32 CityID, SqlString Job )
+    [Microsoft.SqlServer.Server.SqlProcedure]
+    public static SqlInt32 InsertPassenger(SqlString Lastname, SqlString Firstname, SqlString Age, SqlInt32? CabinID = null, SqlString? Ticket = null, SqlString? TicketPrice = null, SqlInt32? CityID = null, SqlString? Job = null)
     {
+        if(!CheckInputs(Lastname, Firstname, Age))
+            return 0;
+        
+
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
-            comm.CommandText = "INSERT INTO Passenger (Lastname, Firstname, Age, CabinID, Ticket, TicketPrice, CityID, Job) VALUES ('"+ Lastname.ToString() +"', '"+ Firstname.ToString() +"', '"+ Age.ToString() +"',"+  CabinID +", '"+ Ticket.ToString() +"', '"+ TicketPrice.ToString() +"', "+ CityID +", '"+ Job.ToString() +"') ";
+            comm.CommandText = "INSERT INTO Passenger (Lastname, Firstname, Age, CabinID, Ticket, TicketPrice, CityID, Job) VALUES ('" + Lastname.ToString() + "', '" + Firstname.ToString() + "', '" + Age.ToString() + "'," + CabinID + ", '" + Ticket.ToString() + "', '" + TicketPrice.ToString() + "', " + CityID + ", '" + Job.ToString() + "') ";
             comm.Connection = conn;
 
             conn.Open();
@@ -34,16 +32,21 @@ public class MalvenProcs
             conn.Close();
             conn.Dispose();
             comm.Dispose();
+            return 1;
         }
     }
 
     [SqlProcedure]
-    public static void InsertCrew(SqlInt32 CrewID, SqlString Lastname, SqlString Firstname, SqlInt32 Age, SqlInt32 DepartmentID, SqlInt32 CityID, SqlString Job, SqlInt32 ClassID)
+    public static SqlInt32 InsertCrew(SqlInt32 CrewID, SqlString Lastname, SqlString Firstname, SqlInt32 Age, SqlInt32 DepartmentID, SqlInt32 CityID, SqlString Job, SqlInt32 ClassID)
     {
+
+        if (!CheckInputs(Lastname, Firstname, Age.ToSqlString()))
+            return 0;
+
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
-            comm.CommandText = "INSERT INTO Crew (CrewID, Lastname, Firstname, Age, DepartmentID, CityID, Job, ClassID) VALUES (" + CrewID + ",'" + Lastname.ToString() + "', '" + Firstname.ToString() + "', " + Age + "," + DepartmentID + ", " + CityID + ", '" + Job.ToString() + "', "+ClassID+") ";
+            comm.CommandText = "INSERT INTO Crew (CrewID, Lastname, Firstname, Age, DepartmentID, CityID, Job, ClassID) VALUES (" + CrewID + ",'" + Lastname.ToString() + "', '" + Firstname.ToString() + "', " + Age + "," + DepartmentID + ", " + CityID + ", '" + Job.ToString() + "', " + ClassID + ") ";
             comm.Connection = conn;
 
             conn.Open();
@@ -51,6 +54,7 @@ public class MalvenProcs
             conn.Close();
             conn.Dispose();
             comm.Dispose();
+            return 1;
         }
     }
 
@@ -127,5 +131,19 @@ public class MalvenProcs
             conn.Dispose();
             comm.Dispose();
         }
+    }
+
+    private static bool CheckInputs(SqlString Lastname, SqlString Firstname, SqlString Age)
+    {
+        int tempAge;
+        bool isNum = int.TryParse(Age.ToString(), out tempAge);
+
+        if (tempAge < 0 || tempAge > 120 || !isNum)
+            return false;
+
+        if (Firstname == "" || Lastname == "")
+            return false;
+
+        return true;
     }
 }
