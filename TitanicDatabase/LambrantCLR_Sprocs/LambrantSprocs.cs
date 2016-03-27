@@ -31,7 +31,24 @@ public class LambrantSprocs
             int tempAge;
             bool isNum = int.TryParse(age.ToString(), out tempAge);
 
-            if (tempAge < 0 || tempAge > 120 || !isNum)
+            if (age.ToString() == "")
+            {
+                comm.CommandText = "SELECT COALESCE(COALESCE(Lastname + ', ', '') + Firstname, Lastname) AS FullName, Age " +
+                                    "FROM Passenger " +
+                                    "UNION ALL " +
+                                    "SELECT COALESCE(COALESCE(Lastname + ', ', '') + Firstname, Lastname) AS FullName, Age " +
+                                    "FROM Crew ";
+
+                comm.Connection = conn;
+                conn.Open();
+                //comm.ExecuteNonQuery();
+                SqlContext.Pipe.ExecuteAndSend(comm);
+                conn.Close();
+                conn.Dispose();
+                comm.Dispose();
+                return 1;
+            }
+            else if (tempAge < 0 || tempAge > 120 || !isNum)
             {
                 return 0;
             }
@@ -66,7 +83,22 @@ public class LambrantSprocs
             int temp;
             bool isNum = int.TryParse(name.ToString(), out temp);
 
-            if (name.ToString() == null || isNum)
+            if (name.ToString() == "")
+            {
+                comm.CommandText = "SELECT COALESCE(COALESCE(p.Lastname + ', ', '') + p.Firstname, p.Lastname) AS FullName, cab.CabinDescription AS Cabin " +
+                                   "FROM Passenger AS p " +
+                                   "INNER JOIN Cabin AS cab ON cab.CabinID = p.CabinID ";
+
+                comm.Connection = conn;
+                conn.Open();
+                //comm.ExecuteNonQuery();
+                SqlContext.Pipe.ExecuteAndSend(comm);
+                conn.Close();
+                conn.Dispose();
+                comm.Dispose();
+                return 1;
+            }
+            else if (name.ToString() == null || isNum)
             {
                 return 0;
             }
@@ -148,7 +180,22 @@ public class LambrantSprocs
             int temp;
             bool isNum = int.TryParse(name.ToString(), out temp);
 
-            if (name.ToString() == null || isNum)
+            if (name.ToString() == "")
+            {
+                comm.CommandText = "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, cl.ClassDescription AS WorkedFor, c.Job AS WorkedAs " +
+                                   "FROM Crew AS c " +
+                                   "LEFT JOIN Class AS cl ON cl.ClassID = c.ClassID ";
+
+                comm.Connection = conn;
+                conn.Open();
+                //comm.ExecuteNonQuery();
+                SqlContext.Pipe.ExecuteAndSend(comm);
+                conn.Close();
+                conn.Dispose();
+                comm.Dispose();
+                return 1;
+            }
+            else if (name.ToString() == null || isNum)
             {
                 return 0;
             }
