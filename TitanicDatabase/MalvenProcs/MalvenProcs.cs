@@ -20,7 +20,8 @@ using Microsoft.SqlServer.Server;
     ni inte tvingar användare att tillhanda värden för alla argument i en stored
     procedures. DONE
 
-    D. Ni ska använda er av aggregat funktioner där det behövs för er business case. DONE
+    D. Ni ska använda er av aggregat funktioner där det behövs för er business case. DONE
+
 */
 public partial class StoredProcedures
 {
