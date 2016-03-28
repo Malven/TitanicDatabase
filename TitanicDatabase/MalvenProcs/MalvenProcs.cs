@@ -13,7 +13,7 @@ using Microsoft.SqlServer.Server;
 - Check which of all the other passengers traveled in the same class as their relative. DONE 
 
     B. Alla era frågor ska vara i form av stored procedures, era frågor ska innehålla
-    variabler (DONE), vilkor(DONE) och loopar(DONE-ISH)
+    variabler (DONE), vilkor(DONE) och loopar(DONE)
 
     C. Vissa av era stored procedures ska ha in parametrar, och vissa av de ska ha
     möjlighet att inte behöva skicka med ett argument för en viss parameter. Så att
