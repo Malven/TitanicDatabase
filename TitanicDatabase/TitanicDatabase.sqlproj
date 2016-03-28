@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="MalvenProcs\MalvenProcs.cs" />
     <Compile Include="MalvenProcs\Crew.cs" />
+    <Compile Include="LambrantsProcs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MalvenProcs\TitanicDatabaseMarcus.publish.xml" />
