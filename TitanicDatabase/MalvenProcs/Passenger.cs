@@ -15,7 +15,7 @@ public class Passenger
     public SqlInt32? CityID { get; set; }
     public SqlString? Job { get; set; }
 
-    public Passenger(SqlString _firstname, SqlString _lastname, SqlString _age, SqlInt32 _cabinID, SqlString _ticket, SqlString _ticketPrice, SqlInt32 _cityID, SqlString _job )
+    public Passenger(SqlString _firstname, SqlString _lastname, SqlString _age, SqlInt32 _cabinID, SqlString _ticket, SqlString _ticketPrice, SqlInt32 _cityID, SqlString _job)
     {
         Firstname = _firstname;
         Lastname = _lastname;

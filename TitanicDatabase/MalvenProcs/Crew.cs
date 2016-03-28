@@ -18,7 +18,7 @@ public class Crew
     public Crew(SqlString _firstname, SqlString _lastname, SqlInt32 _age, SqlInt32 _departmentID, SqlInt32 _cityID, SqlString _job, SqlInt32 _classID )
     {
         Random rnd = new Random(1234);
-        CrewID = DateTime.Now.Year + rnd.Next();
+        CrewID = DateTime.Now.Year + rnd.Next(1000, 1000000);
         Firstname = _firstname;
         Lastname = _lastname;
         Age = _age;
