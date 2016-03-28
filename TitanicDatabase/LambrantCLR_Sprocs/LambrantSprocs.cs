@@ -183,8 +183,8 @@ public class LambrantSprocs
             
             if (name.ToString() == "")
             {
-                //-----------everything from here to
-                conn.Open();
+                //loop section to use in web, will take out a part of the database.
+                /*conn.Open();
                 SqlCommand getClassDescCommand = new SqlCommand("DECLARE @getCD TABLE(classDesc nvarchar(50)) " +
                                                                 "INSERT INTO @getCD SELECT cl.ClassDescription " +
                                                                 "FROM Crew AS c " +
@@ -198,7 +198,7 @@ public class LambrantSprocs
 
                 while (getClassDescReader.Read())
                 {
-                    classDescList.Add(getClassDescReader["ClassDescription"].ToString());
+                    classDescList.Add(getClassDescReader["classDesc"].ToString());
                 }
                 for (int i = 0; i < classDescList.Count; i++)
                 {
@@ -207,17 +207,11 @@ public class LambrantSprocs
                         classDescList[i] = "Ship Maintanence";
                     }
                 }
-                conn.Close();
-                //------------here is a try to change the null value found in the classDescription
-                //----column. As well as the classDescList.ToString() found down below. If there is
-                //---a need to change back, remove the above code and remove the first two lines
-                //--in the string below
+                conn.Close();*/
 
-                comm.CommandText = "UPDATE Class " + 
-                                   "SET ClassDescription = " + classDescList.ToString() + " " +
-                                   "GO " +
-                                   "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, " +
-                                   "cl.ClassDescription AS WorkedFor, c.Job AS WorkedAs " +
+                comm.CommandText = "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, " +
+                                   "CASE WHEN c.ClassID IS NULL THEN 'Ship Maintanance' ELSE cl.ClassDescription END AS 'WorkedFor', " +
+                                   "c.Job AS WorkedAs " +
                                    "FROM Crew AS c " +
                                    "LEFT JOIN Class AS cl ON cl.ClassID = c.ClassID ";
 
