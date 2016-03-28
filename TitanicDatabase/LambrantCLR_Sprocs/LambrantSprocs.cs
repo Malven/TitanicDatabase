@@ -176,7 +176,7 @@ public class LambrantSprocs
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
-
+            
             int temp;
             bool isNum = int.TryParse(name.ToString(), out temp);
             SqlString[] classNull = new SqlString[1104];
@@ -185,12 +185,12 @@ public class LambrantSprocs
             {
                 //-----------everything from here to
                 conn.Open();
-                SqlCommand getClassDescCommand = new SqlCommand("DECLARE @getCD TABLE(classDesc nvarchar(50)); " +
+                SqlCommand getClassDescCommand = new SqlCommand("DECLARE @getCD TABLE(classDesc nvarchar(50)) " +
                                                                 "INSERT INTO @getCD SELECT cl.ClassDescription " +
                                                                 "FROM Crew AS c " +
-                                                                "LEFT JOIN Class AS cl ON cl.ClassID = c.ClassID" +
+                                                                "LEFT JOIN Class AS cl ON cl.ClassID = c.ClassID " +
                                                                 "SELECT * " + 
-                                                                "FROM @getCD ");
+                                                                "FROM @getCD ", conn);
 
                 SqlDataReader getClassDescReader = getClassDescCommand.ExecuteReader();
 
@@ -215,6 +215,7 @@ public class LambrantSprocs
 
                 comm.CommandText = "UPDATE Class " + 
                                    "SET ClassDescription = " + classDescList.ToString() + " " +
+                                   "GO " +
                                    "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, " +
                                    "cl.ClassDescription AS WorkedFor, c.Job AS WorkedAs " +
                                    "FROM Crew AS c " +
