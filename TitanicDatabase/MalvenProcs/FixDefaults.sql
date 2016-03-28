@@ -2,7 +2,6 @@
 Fixar default värden på vissa parametrar, SSDT stödjer tydligen inte defaulta värden när den automatiserar publish
 */
 GO
-
 ALTER PROCEDURE [dbo].[InsertPassenger]
 	@Lastname [nvarchar](50),
 	@Firstname [nvarchar](50),
@@ -28,4 +27,10 @@ ALTER PROCEDURE [dbo].[InsertCrew]
 WITH EXECUTE AS CALLER
 AS
 EXTERNAL NAME [TitanicDatabase].[StoredProcedures].[InsertCrew]
+GO
+
+ALTER PROCEDURE [dbo].[GetPassengerFromCity]
+@CityID INT = null
+WITH EXECUTE AS CALLER
+AS EXTERNAL NAME [TitanicDatabase].[StoredProcedures].[GetPassengerFromCity]
 GO
