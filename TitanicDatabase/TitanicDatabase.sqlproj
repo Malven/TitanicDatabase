@@ -69,7 +69,7 @@
     <Compile Include="MalvenProcs\Crew.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="TitanicDatabaseMarcus.publish.xml" />
+    <None Include="MalvenProcs\TitanicDatabaseMarcus.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MalvenProcs\Passenger.cs" />
