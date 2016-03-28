@@ -21,15 +21,15 @@ using Microsoft.SqlServer.Server;
 
 public class LambrantSprocs
 {
-    [Microsoft.SqlServer.Server.SqlProcedure]
+    [SqlProcedure]
     public static SqlInt32 SearchByAge(SqlString age)
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
 
-            int tempAge;
-            bool isNum = int.TryParse(age.ToString(), out tempAge);
+            int temp;
+            bool isNum = int.TryParse(age.ToString(), out temp);
 
             if (age.ToString() == "")
             {
@@ -48,7 +48,7 @@ public class LambrantSprocs
                 comm.Dispose();
                 return 1;
             }
-            else if (tempAge < 0 || tempAge > 120 || !isNum)
+            else if (temp < 0 || temp > 120 || !isNum)
             {
                 return 0;
             }
@@ -73,7 +73,7 @@ public class LambrantSprocs
         }
     }
 
-    [Microsoft.SqlServer.Server.SqlProcedure]
+    [SqlProcedure]
     public static SqlInt32 CabinPassenger(SqlString name)
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
@@ -122,7 +122,7 @@ public class LambrantSprocs
         }
     }
 
-    [Microsoft.SqlServer.Server.SqlProcedure]
+    [SqlProcedure]
     public static SqlInt32 CrewDepartment(SqlString name)
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
@@ -170,7 +170,7 @@ public class LambrantSprocs
         }
     }
 
-    [Microsoft.SqlServer.Server.SqlProcedure]
+    [SqlProcedure]
     public static SqlInt32 CrewClass(SqlString name)
     {
         using (SqlConnection conn = new SqlConnection("context connection=true"))
@@ -179,10 +179,44 @@ public class LambrantSprocs
 
             int temp;
             bool isNum = int.TryParse(name.ToString(), out temp);
-
+            SqlString[] classNull = new SqlString[1104];
+            
             if (name.ToString() == "")
             {
-                comm.CommandText = "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, cl.ClassDescription AS WorkedFor, c.Job AS WorkedAs " +
+                //-----------everything from here to
+                conn.Open();
+                SqlCommand getClassDescCommand = new SqlCommand("DECLARE @getCD TABLE(classDesc nvarchar(50)); " +
+                                                                "INSERT INTO @getCD SELECT cl.ClassDescription " +
+                                                                "FROM Crew AS c " +
+                                                                "LEFT JOIN Class AS cl ON cl.ClassID = c.ClassID" +
+                                                                "SELECT * " + 
+                                                                "FROM @getCD ");
+
+                SqlDataReader getClassDescReader = getClassDescCommand.ExecuteReader();
+
+                List<string> classDescList = new List<string>();
+
+                while (getClassDescReader.Read())
+                {
+                    classDescList.Add(getClassDescReader["ClassDescription"].ToString());
+                }
+                for (int i = 0; i < classDescList.Count; i++)
+                {
+                    if (classDescList[i].ToString() == "NULL")
+                    {
+                        classDescList[i] = "Ship Maintanence";
+                    }
+                }
+                conn.Close();
+                //------------here is a try to change the null value found in the classDescription
+                //----column. As well as the classDescList.ToString() found down below. If there is
+                //---a need to change back, remove the above code and remove the first two lines
+                //--in the string below
+
+                comm.CommandText = "UPDATE Class " + 
+                                   "SET ClassDescription = " + classDescList.ToString() + " " +
+                                   "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, " +
+                                   "cl.ClassDescription AS WorkedFor, c.Job AS WorkedAs " +
                                    "FROM Crew AS c " +
                                    "LEFT JOIN Class AS cl ON cl.ClassID = c.ClassID ";
 
