@@ -1,0 +1,541 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="TitanicModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Cabin">
+          <Key>
+            <PropertyRef Name="CabinID" />
+          </Key>
+          <Property Name="CabinID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CabinDescription" Type="varchar" MaxLength="50" />
+          <Property Name="CabinPrice" Type="int" />
+          <Property Name="ClassID" Type="int" />
+        </EntityType>
+        <EntityType Name="Class">
+          <Key>
+            <PropertyRef Name="ClassID" />
+          </Key>
+          <Property Name="ClassID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClassDescription" Type="text" />
+        </EntityType>
+        <EntityType Name="Crew">
+          <Key>
+            <PropertyRef Name="CrewID" />
+          </Key>
+          <Property Name="CrewID" Type="int" Nullable="false" />
+          <Property Name="Lastname" Type="varchar" MaxLength="50" />
+          <Property Name="Firstname" Type="varchar" MaxLength="50" />
+          <Property Name="Age" Type="int" />
+          <Property Name="DepartmentID" Type="int" />
+          <Property Name="CityID" Type="int" />
+          <Property Name="Job" Type="varchar" MaxLength="50" />
+          <Property Name="ClassID" Type="int" />
+        </EntityType>
+        <EntityType Name="DepartCity">
+          <Key>
+            <PropertyRef Name="cityID" />
+          </Key>
+          <Property Name="cityID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="cityName" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="DepartmentID" />
+          </Key>
+          <Property Name="DepartmentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DepartmentDescription" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Passenger">
+          <Key>
+            <PropertyRef Name="PassengerID" />
+          </Key>
+          <Property Name="PassengerID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Lastname" Type="varchar" MaxLength="50" />
+          <Property Name="Firstname" Type="varchar" MaxLength="50" />
+          <Property Name="Age" Type="varchar" MaxLength="50" />
+          <Property Name="CabinID" Type="int" />
+          <Property Name="Ticket" Type="varchar" MaxLength="50" />
+          <Property Name="TicketPrice" Type="varchar" MaxLength="50" />
+          <Property Name="CityID" Type="int" />
+          <Property Name="Job" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK_Cabin_Class">
+          <End Role="Class" Type="Self.Class" Multiplicity="0..1" />
+          <End Role="Cabin" Type="Self.Cabin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Class">
+              <PropertyRef Name="ClassID" />
+            </Principal>
+            <Dependent Role="Cabin">
+              <PropertyRef Name="ClassID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Crew_Class">
+          <End Role="Class" Type="Self.Class" Multiplicity="0..1" />
+          <End Role="Crew" Type="Self.Crew" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Class">
+              <PropertyRef Name="ClassID" />
+            </Principal>
+            <Dependent Role="Crew">
+              <PropertyRef Name="ClassID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Crew_DepartCity">
+          <End Role="DepartCity" Type="Self.DepartCity" Multiplicity="0..1" />
+          <End Role="Crew" Type="Self.Crew" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DepartCity">
+              <PropertyRef Name="cityID" />
+            </Principal>
+            <Dependent Role="Crew">
+              <PropertyRef Name="CityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Crew_Department">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Crew" Type="Self.Crew" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentID" />
+            </Principal>
+            <Dependent Role="Crew">
+              <PropertyRef Name="DepartmentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Passenger_Cabin">
+          <End Role="Cabin" Type="Self.Cabin" Multiplicity="0..1" />
+          <End Role="Passenger" Type="Self.Passenger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cabin">
+              <PropertyRef Name="CabinID" />
+            </Principal>
+            <Dependent Role="Passenger">
+              <PropertyRef Name="CabinID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Passenger_DepartCity">
+          <End Role="DepartCity" Type="Self.DepartCity" Multiplicity="0..1" />
+          <End Role="Passenger" Type="Self.Passenger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DepartCity">
+              <PropertyRef Name="cityID" />
+            </Principal>
+            <Dependent Role="Passenger">
+              <PropertyRef Name="CityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="CabinPassenger" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="name" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <Function Name="CrewClass" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="name" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <Function Name="CrewDepartment" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="name" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <Function Name="GetAllInCrew" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="GetClassOfPassenger" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Firstname" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Lastname" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <Function Name="GetClassOfPassengers" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Firstname" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Lastname" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <Function Name="GetCrewFromCity" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CityID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetPassengerFromCity" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CityID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="InsertCrew" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Lastname" Type="nvarchar" Mode="In" />
+          <Parameter Name="Firstname" Type="nvarchar" Mode="In" />
+          <Parameter Name="Age" Type="int" Mode="In" />
+          <Parameter Name="DepartmentID" Type="int" Mode="In" />
+          <Parameter Name="CityID" Type="int" Mode="In" />
+          <Parameter Name="Job" Type="nvarchar" Mode="In" />
+          <Parameter Name="ClassID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="InsertPassenger" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Lastname" Type="nvarchar" Mode="In" />
+          <Parameter Name="Firstname" Type="nvarchar" Mode="In" />
+          <Parameter Name="Age" Type="nvarchar" Mode="In" />
+          <Parameter Name="CabinID" Type="int" Mode="In" />
+          <Parameter Name="Ticket" Type="nvarchar" Mode="In" />
+          <Parameter Name="TicketPrice" Type="nvarchar" Mode="In" />
+          <Parameter Name="CityID" Type="int" Mode="In" />
+          <Parameter Name="Job" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="SearchByAge" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="age" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <EntityContainer Name="TitanicModelStoreContainer">
+          <EntitySet Name="Cabin" EntityType="Self.Cabin" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Class" EntityType="Self.Class" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Crew" EntityType="Self.Crew" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DepartCity" EntityType="Self.DepartCity" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Department" EntityType="Self.Department" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Passenger" EntityType="Self.Passenger" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Cabin_Class" Association="Self.FK_Cabin_Class">
+            <End Role="Class" EntitySet="Class" />
+            <End Role="Cabin" EntitySet="Cabin" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Crew_Class" Association="Self.FK_Crew_Class">
+            <End Role="Class" EntitySet="Class" />
+            <End Role="Crew" EntitySet="Crew" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Crew_DepartCity" Association="Self.FK_Crew_DepartCity">
+            <End Role="DepartCity" EntitySet="DepartCity" />
+            <End Role="Crew" EntitySet="Crew" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Crew_Department" Association="Self.FK_Crew_Department">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Crew" EntitySet="Crew" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Passenger_Cabin" Association="Self.FK_Passenger_Cabin">
+            <End Role="Cabin" EntitySet="Cabin" />
+            <End Role="Passenger" EntitySet="Passenger" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Passenger_DepartCity" Association="Self.FK_Passenger_DepartCity">
+            <End Role="DepartCity" EntitySet="DepartCity" />
+            <End Role="Passenger" EntitySet="Passenger" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="TitanicModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Cabin">
+          <Key>
+            <PropertyRef Name="CabinID" />
+          </Key>
+          <Property Name="CabinID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CabinDescription" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CabinPrice" Type="Int32" />
+          <Property Name="ClassID" Type="Int32" />
+          <NavigationProperty Name="Class" Relationship="Self.FK_Cabin_Class" FromRole="Cabin" ToRole="Class" />
+          <NavigationProperty Name="Passenger" Relationship="Self.FK_Passenger_Cabin" FromRole="Cabin" ToRole="Passenger" />
+        </EntityType>
+        <EntityType Name="Class">
+          <Key>
+            <PropertyRef Name="ClassID" />
+          </Key>
+          <Property Name="ClassID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClassDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Cabin" Relationship="Self.FK_Cabin_Class" FromRole="Class" ToRole="Cabin" />
+          <NavigationProperty Name="Crew" Relationship="Self.FK_Crew_Class" FromRole="Class" ToRole="Crew" />
+        </EntityType>
+        <EntityType Name="Crew">
+          <Key>
+            <PropertyRef Name="CrewID" />
+          </Key>
+          <Property Name="CrewID" Type="Int32" Nullable="false" />
+          <Property Name="Lastname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Firstname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Age" Type="Int32" />
+          <Property Name="DepartmentID" Type="Int32" />
+          <Property Name="CityID" Type="Int32" />
+          <Property Name="Job" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ClassID" Type="Int32" />
+          <NavigationProperty Name="Class" Relationship="Self.FK_Crew_Class" FromRole="Crew" ToRole="Class" />
+          <NavigationProperty Name="DepartCity" Relationship="Self.FK_Crew_DepartCity" FromRole="Crew" ToRole="DepartCity" />
+          <NavigationProperty Name="Department" Relationship="Self.FK_Crew_Department" FromRole="Crew" ToRole="Department" />
+        </EntityType>
+        <EntityType Name="DepartCity">
+          <Key>
+            <PropertyRef Name="cityID" />
+          </Key>
+          <Property Name="cityID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="cityName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Crew" Relationship="Self.FK_Crew_DepartCity" FromRole="DepartCity" ToRole="Crew" />
+          <NavigationProperty Name="Passenger" Relationship="Self.FK_Passenger_DepartCity" FromRole="DepartCity" ToRole="Passenger" />
+        </EntityType>
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="DepartmentID" />
+          </Key>
+          <Property Name="DepartmentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DepartmentDescription" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Crew" Relationship="Self.FK_Crew_Department" FromRole="Department" ToRole="Crew" />
+        </EntityType>
+        <EntityType Name="Passenger">
+          <Key>
+            <PropertyRef Name="PassengerID" />
+          </Key>
+          <Property Name="PassengerID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Lastname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Firstname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Age" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CabinID" Type="Int32" />
+          <Property Name="Ticket" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TicketPrice" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CityID" Type="Int32" />
+          <Property Name="Job" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Cabin" Relationship="Self.FK_Passenger_Cabin" FromRole="Passenger" ToRole="Cabin" />
+          <NavigationProperty Name="DepartCity" Relationship="Self.FK_Passenger_DepartCity" FromRole="Passenger" ToRole="DepartCity" />
+        </EntityType>
+        <Association Name="FK_Cabin_Class">
+          <End Role="Class" Type="Self.Class" Multiplicity="0..1" />
+          <End Role="Cabin" Type="Self.Cabin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Class">
+              <PropertyRef Name="ClassID" />
+            </Principal>
+            <Dependent Role="Cabin">
+              <PropertyRef Name="ClassID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Passenger_Cabin">
+          <End Role="Cabin" Type="Self.Cabin" Multiplicity="0..1" />
+          <End Role="Passenger" Type="Self.Passenger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cabin">
+              <PropertyRef Name="CabinID" />
+            </Principal>
+            <Dependent Role="Passenger">
+              <PropertyRef Name="CabinID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Crew_Class">
+          <End Role="Class" Type="Self.Class" Multiplicity="0..1" />
+          <End Role="Crew" Type="Self.Crew" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Class">
+              <PropertyRef Name="ClassID" />
+            </Principal>
+            <Dependent Role="Crew">
+              <PropertyRef Name="ClassID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Crew_DepartCity">
+          <End Role="DepartCity" Type="Self.DepartCity" Multiplicity="0..1" />
+          <End Role="Crew" Type="Self.Crew" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DepartCity">
+              <PropertyRef Name="cityID" />
+            </Principal>
+            <Dependent Role="Crew">
+              <PropertyRef Name="CityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Crew_Department">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Crew" Type="Self.Crew" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentID" />
+            </Principal>
+            <Dependent Role="Crew">
+              <PropertyRef Name="DepartmentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Passenger_DepartCity">
+          <End Role="DepartCity" Type="Self.DepartCity" Multiplicity="0..1" />
+          <End Role="Passenger" Type="Self.Passenger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DepartCity">
+              <PropertyRef Name="cityID" />
+            </Principal>
+            <Dependent Role="Passenger">
+              <PropertyRef Name="CityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TitanicEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Cabin" EntityType="Self.Cabin" />
+          <EntitySet Name="Class" EntityType="Self.Class" />
+          <EntitySet Name="Crew" EntityType="Self.Crew" />
+          <EntitySet Name="DepartCity" EntityType="Self.DepartCity" />
+          <EntitySet Name="Department" EntityType="Self.Department" />
+          <EntitySet Name="Passenger" EntityType="Self.Passenger" />
+          <AssociationSet Name="FK_Cabin_Class" Association="Self.FK_Cabin_Class">
+            <End Role="Class" EntitySet="Class" />
+            <End Role="Cabin" EntitySet="Cabin" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Passenger_Cabin" Association="Self.FK_Passenger_Cabin">
+            <End Role="Cabin" EntitySet="Cabin" />
+            <End Role="Passenger" EntitySet="Passenger" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Crew_Class" Association="Self.FK_Crew_Class">
+            <End Role="Class" EntitySet="Class" />
+            <End Role="Crew" EntitySet="Crew" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Crew_DepartCity" Association="Self.FK_Crew_DepartCity">
+            <End Role="DepartCity" EntitySet="DepartCity" />
+            <End Role="Crew" EntitySet="Crew" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Crew_Department" Association="Self.FK_Crew_Department">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Crew" EntitySet="Crew" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Passenger_DepartCity" Association="Self.FK_Passenger_DepartCity">
+            <End Role="DepartCity" EntitySet="DepartCity" />
+            <End Role="Passenger" EntitySet="Passenger" />
+          </AssociationSet>
+          <FunctionImport Name="CabinPassenger">
+          <Parameter Name="name" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="CrewClass">
+          <Parameter Name="name" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="CrewDepartment">
+          <Parameter Name="name" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetAllInCrew" />
+          <FunctionImport Name="GetClassOfPassenger">
+            <Parameter Name="Firstname" Mode="In" Type="String" />
+            <Parameter Name="Lastname" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetClassOfPassengers">
+            <Parameter Name="Firstname" Mode="In" Type="String" />
+            <Parameter Name="Lastname" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetCrewFromCity">
+          <Parameter Name="CityID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetPassengerFromCity">
+          <Parameter Name="CityID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="InsertCrew">
+            <Parameter Name="Lastname" Mode="In" Type="String" />
+            <Parameter Name="Firstname" Mode="In" Type="String" />
+            <Parameter Name="Age" Mode="In" Type="Int32" />
+            <Parameter Name="DepartmentID" Mode="In" Type="Int32" />
+            <Parameter Name="CityID" Mode="In" Type="Int32" />
+            <Parameter Name="Job" Mode="In" Type="String" />
+            <Parameter Name="ClassID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="InsertPassenger">
+            <Parameter Name="Lastname" Mode="In" Type="String" />
+            <Parameter Name="Firstname" Mode="In" Type="String" />
+            <Parameter Name="Age" Mode="In" Type="String" />
+            <Parameter Name="CabinID" Mode="In" Type="Int32" />
+            <Parameter Name="Ticket" Mode="In" Type="String" />
+            <Parameter Name="TicketPrice" Mode="In" Type="String" />
+            <Parameter Name="CityID" Mode="In" Type="Int32" />
+            <Parameter Name="Job" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SearchByAge">
+          <Parameter Name="age" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="TitanicModelStoreContainer" CdmEntityContainer="TitanicEntities">
+          <EntitySetMapping Name="Cabin">
+            <EntityTypeMapping TypeName="TitanicModel.Cabin">
+              <MappingFragment StoreEntitySet="Cabin">
+                <ScalarProperty Name="CabinID" ColumnName="CabinID" />
+                <ScalarProperty Name="CabinDescription" ColumnName="CabinDescription" />
+                <ScalarProperty Name="CabinPrice" ColumnName="CabinPrice" />
+                <ScalarProperty Name="ClassID" ColumnName="ClassID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Class">
+            <EntityTypeMapping TypeName="TitanicModel.Class">
+              <MappingFragment StoreEntitySet="Class">
+                <ScalarProperty Name="ClassID" ColumnName="ClassID" />
+                <ScalarProperty Name="ClassDescription" ColumnName="ClassDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Crew">
+            <EntityTypeMapping TypeName="TitanicModel.Crew">
+              <MappingFragment StoreEntitySet="Crew">
+                <ScalarProperty Name="CrewID" ColumnName="CrewID" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+                <ScalarProperty Name="CityID" ColumnName="CityID" />
+                <ScalarProperty Name="Job" ColumnName="Job" />
+                <ScalarProperty Name="ClassID" ColumnName="ClassID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DepartCity">
+            <EntityTypeMapping TypeName="TitanicModel.DepartCity">
+              <MappingFragment StoreEntitySet="DepartCity">
+                <ScalarProperty Name="cityID" ColumnName="cityID" />
+                <ScalarProperty Name="cityName" ColumnName="cityName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Department">
+            <EntityTypeMapping TypeName="TitanicModel.Department">
+              <MappingFragment StoreEntitySet="Department">
+                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+                <ScalarProperty Name="DepartmentDescription" ColumnName="DepartmentDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Passenger">
+            <EntityTypeMapping TypeName="TitanicModel.Passenger">
+              <MappingFragment StoreEntitySet="Passenger">
+                <ScalarProperty Name="PassengerID" ColumnName="PassengerID" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="CabinID" ColumnName="CabinID" />
+                <ScalarProperty Name="Ticket" ColumnName="Ticket" />
+                <ScalarProperty Name="TicketPrice" ColumnName="TicketPrice" />
+                <ScalarProperty Name="CityID" ColumnName="CityID" />
+                <ScalarProperty Name="Job" ColumnName="Job" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="CabinPassenger" FunctionName="TitanicModel.Store.CabinPassenger" />
+          <FunctionImportMapping FunctionImportName="CrewClass" FunctionName="TitanicModel.Store.CrewClass" />
+          <FunctionImportMapping FunctionImportName="CrewDepartment" FunctionName="TitanicModel.Store.CrewDepartment" />
+          <FunctionImportMapping FunctionImportName="GetAllInCrew" FunctionName="TitanicModel.Store.GetAllInCrew" />
+          <FunctionImportMapping FunctionImportName="GetClassOfPassenger" FunctionName="TitanicModel.Store.GetClassOfPassenger" />
+          <FunctionImportMapping FunctionImportName="GetClassOfPassengers" FunctionName="TitanicModel.Store.GetClassOfPassengers" />
+          <FunctionImportMapping FunctionImportName="GetCrewFromCity" FunctionName="TitanicModel.Store.GetCrewFromCity" />
+          <FunctionImportMapping FunctionImportName="GetPassengerFromCity" FunctionName="TitanicModel.Store.GetPassengerFromCity" />
+          <FunctionImportMapping FunctionImportName="InsertCrew" FunctionName="TitanicModel.Store.InsertCrew" />
+          <FunctionImportMapping FunctionImportName="InsertPassenger" FunctionName="TitanicModel.Store.InsertPassenger" />
+          <FunctionImportMapping FunctionImportName="SearchByAge" FunctionName="TitanicModel.Store.SearchByAge" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Default" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
