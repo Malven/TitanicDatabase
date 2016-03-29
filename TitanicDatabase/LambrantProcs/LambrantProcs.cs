@@ -28,6 +28,13 @@ public partial class StoredProcedures
             int temp;
             bool isNum = int.TryParse(age.ToString(), out temp);
 
+            SqlParameter ageParam = new SqlParameter();
+            ageParam.Direction = ParameterDirection.Input;
+            ageParam.ParameterName = "@Age";
+            ageParam.SqlDbType = SqlDbType.Int;
+            ageParam.SqlValue = age;
+            comm.Parameters.Add(age);
+
             if (age.ToString() == "")
             {
                 comm.CommandText = "SELECT COALESCE(COALESCE(Lastname + ', ', '') + Firstname, Lastname) AS FullName, Age " +
@@ -53,10 +60,10 @@ public partial class StoredProcedures
             {
                 comm.CommandText = "SELECT COALESCE(COALESCE(Lastname + ', ', '') + Firstname, Lastname) AS FullName, Age " +
                                     "FROM Passenger " +
-                                    "WHERE Age = " + age.ToString() + " UNION ALL " +
+                                    "WHERE Age = @Age UNION ALL " +
                                     "SELECT COALESCE(COALESCE(Lastname + ', ', '') + Firstname, Lastname) AS FullName, Age " +
                                     "FROM Crew " +
-                                    "WHERE Age = " + age.ToString() + ";";
+                                    "WHERE Age = @Age;";
 
                 comm.Connection = conn;
                 conn.Open();
