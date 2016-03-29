@@ -87,6 +87,13 @@ public partial class StoredProcedures
             int temp;
             bool isNum = int.TryParse(name.ToString(), out temp);
 
+            SqlParameter nameParam = new SqlParameter();
+            nameParam.Direction = ParameterDirection.Input;
+            nameParam.ParameterName = "@Name";
+            nameParam.SqlDbType = SqlDbType.NVarChar;
+            nameParam.SqlValue = name;
+            comm.Parameters.Add(name);
+
             if (name.ToString() == "")
             {
                 comm.CommandText = "SELECT COALESCE(COALESCE(p.Lastname + ', ', '') + p.Firstname, p.Lastname) AS FullName, cab.CabinDescription AS Cabin " +
@@ -112,7 +119,7 @@ public partial class StoredProcedures
                                    "cab.CabinPrice " +
                                    "FROM Passenger AS p " +
                                    "INNER JOIN Cabin AS cab ON cab.CabinID = p.CabinID " +
-                                   "WHERE p.Lastname = '" + name.ToString() + "';";
+                                   "WHERE p.Lastname = @Name;";
 
                 comm.Connection = conn;
                 conn.Open();
@@ -135,6 +142,13 @@ public partial class StoredProcedures
 
             int temp;
             bool isNum = int.TryParse(name.ToString(), out temp);
+
+            SqlParameter nameParam = new SqlParameter();
+            nameParam.Direction = ParameterDirection.Input;
+            nameParam.ParameterName = "@Name";
+            nameParam.SqlDbType = SqlDbType.NVarChar;
+            nameParam.SqlValue = name;
+            comm.Parameters.Add(name);
 
             if (name.ToString() == "")
             {
@@ -160,7 +174,7 @@ public partial class StoredProcedures
                 comm.CommandText = "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, d.DepartmentDescription AS Department, c.Job " +
                                 "FROM Crew AS c " +
                                 "INNER JOIN Department AS d ON d.DepartmentID = c.DepartmentID " +
-                                "WHERE c.Lastname = '" + name.ToString() + "';";
+                                "WHERE c.Lastname = @Name;";
 
                 comm.Connection = conn;
                 conn.Open();
@@ -183,7 +197,14 @@ public partial class StoredProcedures
 
             int temp;
             bool isNum = int.TryParse(name.ToString(), out temp);
-            SqlString[] classNull = new SqlString[1104];
+            //SqlString[] classNull = new SqlString[1104];
+
+            SqlParameter nameParam = new SqlParameter();
+            nameParam.Direction = ParameterDirection.Input;
+            nameParam.ParameterName = "@Name";
+            nameParam.SqlDbType = SqlDbType.NVarChar;
+            nameParam.SqlValue = name;
+            comm.Parameters.Add(name);
 
             if (name.ToString() == "")
             {
@@ -237,9 +258,9 @@ public partial class StoredProcedures
                 comm.CommandText = "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, cl.ClassDescription AS WorkedFor, c.Job AS WorkedAs " +
                                    "FROM Crew AS c " +
                                    "LEFT JOIN Class AS cl ON cl.ClassID = c.ClassID " +
-                                   "WHERE c.Lastname = '" + name.ToString() + "' " +
+                                   "WHERE c.Lastname = @Name " +
                                    "AND c.ClassID IS NULL OR " +
-                                   "c.Lastname = '" + name.ToString() + "' " +
+                                   "c.Lastname = @Name " +
                                    "AND c.ClassID IS NOT NULL;";
 
                 comm.Connection = conn;
