@@ -3,26 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using Microsoft.SqlServer.Server;
-/*
-- Add a passenger/crewmember if they find that their relative is missing from the database. DONE
 
-- Look up which city their relative deported from. DONE
-
-- Look up which class their relative traveled with. DONE
-
-- Check which of all the other passengers traveled in the same class as their relative. DONE 
-
-    B. Alla era frågor ska vara i form av stored procedures, era frågor ska innehålla
-    variabler (DONE), vilkor(DONE) och loopar(DONE)
-
-    C. Vissa av era stored procedures ska ha in parametrar, och vissa av de ska ha
-    möjlighet att inte behöva skicka med ett argument för en viss parameter. Så att
-    ni inte tvingar användare att tillhanda värden för alla argument i en stored
-    procedures. DONE
-
-    D. Ni ska använda er av aggregat funktioner där det behövs för er business case. DONE
-
-*/
 public partial class StoredProcedures
 {
     /// <summary>
@@ -44,7 +25,7 @@ public partial class StoredProcedures
             CityID = 1;
         if (CabinID.IsNull)
             CabinID = 1;
-       
+
         Passenger newPassenger = new Passenger(Firstname, Lastname, Age, CabinID, Ticket, TicketPrice, CityID, Job);
 
         if(newPassenger.CheckInputs())
