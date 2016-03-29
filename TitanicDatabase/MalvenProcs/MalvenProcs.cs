@@ -20,21 +20,21 @@ public partial class StoredProcedures
     /// <returns>1 for success, 0 for failure</returns>
     [SqlProcedure]
     public static SqlInt32 InsertPassenger(SqlString Lastname, SqlString Firstname, SqlString Age, SqlInt32 CabinID, SqlString Ticket, SqlString TicketPrice, SqlInt32 CityID, SqlString Job)
-    {
-        if (CityID.IsNull)
-            CityID = 1;
-        if (CabinID.IsNull)
-            CabinID = 1;
-
+    { 
         Passenger newPassenger = new Passenger(Firstname, Lastname, Age, CabinID, Ticket, TicketPrice, CityID, Job);
 
         if(newPassenger.CheckInputs())
             return 0;
-
+        
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
-            comm.CommandText = "INSERT INTO Passenger (Lastname, Firstname, Age, CabinID, Ticket, TicketPrice, CityID, Job) VALUES ('" + newPassenger.Lastname.ToString() + "', '" + newPassenger.Firstname.ToString() + "', '" + newPassenger.Age.ToString() + "'," + newPassenger.CabinID + ", '" + newPassenger.Ticket.ToString() + "', '" + newPassenger.TicketPrice.ToString() + "', " + newPassenger.CityID + ", '" + newPassenger.Job.ToString() + "') ";
+            comm.CommandText = "INSERT INTO Passenger (Lastname, Firstname, Age, CabinID, Ticket, TicketPrice, CityID, Job) VALUES (@Lastname, @Firstname, @Age, @CabinID, @Ticket, @TicketPrice, @CityID, @Job) "; // + newPassenger.Lastname.ToString() + "', '" + newPassenger.Firstname.ToString() + "', '" + newPassenger.Age.ToString() + "'," + newPassenger.CabinID + ", '" + newPassenger.Ticket.ToString() + "', '" + newPassenger.TicketPrice.ToString() + "', " + newPassenger.CityID + ", '" + newPassenger.Job.ToString() + "') ";
+
+            foreach ( var param in newPassenger.paramList ) {
+                comm.Parameters.Add( param );
+            }
+
             comm.Connection = conn;
             conn.Open();
             comm.ExecuteNonQuery();
@@ -67,9 +67,12 @@ public partial class StoredProcedures
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
-            comm.CommandText = "INSERT INTO Crew (CrewID, Lastname, Firstname, Age, DepartmentID, CityID, Job, ClassID) VALUES (" + newCrew.CrewID + ",'" + newCrew.Lastname.ToString() + "', '" + newCrew.Firstname.ToString() + "', " + newCrew.Age + "," + newCrew.DepartmentID + ", " + newCrew.CityID + ", '" + newCrew.Job.ToString() + "', " + newCrew.ClassID + ") ";
+            comm.CommandText = "INSERT INTO Crew ( Lastname, Firstname, Age, DepartmentID, CityID, Job, ClassID) VALUES (@Lastname, @Firstname, @Age, @DepartmentID, @CityID, @Job, @ClassID)";
             comm.Connection = conn;
 
+            foreach ( var param in newCrew.paramList ) {
+                comm.Parameters.Add( param );
+            }
             conn.Open();
             comm.ExecuteNonQuery();
             conn.Close();
@@ -137,8 +140,14 @@ public partial class StoredProcedures
                               "JOIN Department ON Crew.DepartmentID = Department.DepartmentID " +
                               "JOIN DepartCity ON Crew.CityID = DepartCity.cityID " +
                               "JOIN Class ON Crew.ClassID = Class.ClassID ";
-            if (CityID != SqlInt32.Null || CityID <= 4)
-                query += "WHERE Crew.CityID = " + CityID;
+            if (CityID != SqlInt32.Null || CityID <= 4 ) {
+                query += "WHERE Crew.CityID = @CityID";
+
+                SqlParameter paramCityID = new SqlParameter( "@CityID", System.Data.SqlDbType.Int );
+                paramCityID.Value = CityID;
+                paramCityID.Direction = System.Data.ParameterDirection.Input;
+                comm.Parameters.Add( paramCityID );
+            }
 
             comm.CommandText = query;
             comm.Connection = conn;
@@ -175,8 +184,14 @@ public partial class StoredProcedures
                               "JOIN Cabin ON Cabin.CabinID = Passenger.CabinID " +
                               "JOIN DepartCity ON Passenger.CityID = DepartCity.cityID " +
                               "JOIN Class ON Cabin.ClassID = Class.ClassID ";
-            if(CityID != SqlInt32.Null || CityID <= 4)
-                query += "WHERE Passenger.CityID = " + CityID;
+            if ( CityID != SqlInt32.Null || CityID <= 4 ) {
+                query += "WHERE Passenger.CityID = @CityID";
+
+                SqlParameter paramCityID = new SqlParameter( "@CityID", System.Data.SqlDbType.Int );
+                paramCityID.Value = CityID;
+                paramCityID.Direction = System.Data.ParameterDirection.Input;
+                comm.Parameters.Add( paramCityID );
+            }
 
             comm.CommandText = query;
             comm.Connection = conn;
@@ -213,8 +228,18 @@ public partial class StoredProcedures
                               "JOIN Cabin ON Cabin.CabinID = Passenger.CabinID " +
                               "JOIN DepartCity ON Passenger.CityID = DepartCity.cityID " +
                               "JOIN Class ON Cabin.ClassID = Class.ClassID " +
-                              "WHERE Passenger.Firstname LIKE '%" + Firstname.ToString() + "%' AND Passenger.Lastname LIKE '%" + Lastname.ToString() + "%'";
+                              "WHERE Passenger.Firstname LIKE @Firstname AND Passenger.Lastname LIKE @Lastname";
             comm.Connection = conn;
+
+            SqlParameter paramFirstname = new SqlParameter( "@Firstname", System.Data.SqlDbType.NVarChar );
+            paramFirstname.Value = Firstname;
+            paramFirstname.Direction = ParameterDirection.Input;
+            comm.Parameters.Add( paramFirstname );
+
+            SqlParameter paramLastname = new SqlParameter( "@Lastname", System.Data.SqlDbType.NVarChar );
+            paramLastname.Value = Lastname;
+            paramLastname.Direction = ParameterDirection.Input;
+            comm.Parameters.Add( paramLastname );
 
             conn.Open();
             SqlContext.Pipe.ExecuteAndSend(comm);
@@ -247,7 +272,19 @@ public partial class StoredProcedures
                               "JOIN Cabin ON Cabin.CabinID = Passenger.CabinID " +
                               "JOIN DepartCity ON Passenger.CityID = DepartCity.cityID " +
                               "JOIN Class ON Cabin.ClassID = Class.ClassID " +
-                              "WHERE Passenger.Firstname LIKE '%" + Firstname.ToString() + "%' AND Passenger.Lastname LIKE '%" + Lastname.ToString() + "%'", conn);
+                              "WHERE Passenger.Firstname LIKE @Firstname AND Passenger.Lastname LIKE @Lastname", conn);
+
+
+
+        SqlParameter paramFirstname = new SqlParameter( "@Firstname", System.Data.SqlDbType.NVarChar );
+        paramFirstname.Value = Firstname;
+        paramFirstname.Direction = ParameterDirection.Input;
+        getPassCommand.Parameters.Add( paramFirstname );
+
+        SqlParameter paramLastname = new SqlParameter( "@Lastname", System.Data.SqlDbType.NVarChar );
+        paramLastname.Value = Lastname;
+        paramLastname.Direction = ParameterDirection.Input;
+        getPassCommand.Parameters.Add( paramLastname );
 
         SqlDataReader getPassengerRdr = getPassCommand.ExecuteReader();
 

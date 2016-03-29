@@ -34,3 +34,9 @@ ALTER PROCEDURE [dbo].[GetPassengerFromCity]
 WITH EXECUTE AS CALLER
 AS EXTERNAL NAME [TitanicDatabase].[StoredProcedures].[GetPassengerFromCity]
 GO
+
+ALTER PROCEDURE [dbo].[GetCrewFromCity]
+@CityID INT = null
+WITH EXECUTE AS CALLER
+AS EXTERNAL NAME [TitanicDatabase].[StoredProcedures].[GetCrewFromCity]
+GO
