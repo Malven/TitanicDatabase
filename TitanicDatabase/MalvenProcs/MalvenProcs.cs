@@ -6,6 +6,22 @@ using Microsoft.SqlServer.Server;
 
 public partial class StoredProcedures
 {
+    [SqlProcedure]
+    public static void Test(Int32 intAge ) {
+        SqlConnection conn = new SqlConnection( "Context Connection=True" );
+
+        SqlCommand cmd = new SqlCommand( "SELECT * FROM CREW WHERE Age = @IntAge", conn );
+        SqlParameter paramAge = new SqlParameter();
+        paramAge.Value = intAge;
+        paramAge.Direction = ParameterDirection.Input;
+        paramAge.DbType = DbType.Int32;
+        paramAge.ParameterName = "@IntAge";
+
+        cmd.Parameters.Add( paramAge );
+        SqlDataReader rdr = cmd.ExecuteReader();
+
+    }
+
     /// <summary>
     /// Creates an instance of the Passenger class, CabinID and CityID have default values of 1
     /// </summary>
