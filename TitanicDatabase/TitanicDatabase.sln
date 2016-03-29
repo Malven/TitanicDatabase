@@ -5,6 +5,28 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TitanicDatabase", "TitanicDatabase.sqlproj", "{2AF9E8FB-5B5C-41B7-AAAE-6A8B6A241E2B}"
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "TitanicSite", "..\..\..\..\..\..\..\Users\Andreas\Documents\Visual Studio 2015\WebSites\TitanicSite\", "{F294354B-CC6A-4B1A-B0D2-DAEFB2EEB005}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.6.1"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_57981"
+		Debug.AspNetCompiler.PhysicalPath = "..\..\..\..\..\..\..\Users\Andreas\Documents\Visual Studio 2015\WebSites\TitanicSite\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_57981\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_57981"
+		Release.AspNetCompiler.PhysicalPath = "..\..\..\..\..\..\..\Users\Andreas\Documents\Visual Studio 2015\WebSites\TitanicSite\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_57981\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "57981"
+		SlnRelativePath = "..\..\..\..\..\..\..\Users\Andreas\Documents\Visual Studio 2015\WebSites\TitanicSite\"
+		DefaultWebSiteLanguage = "Visual C#"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +39,10 @@ Global
 		{2AF9E8FB-5B5C-41B7-AAAE-6A8B6A241E2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AF9E8FB-5B5C-41B7-AAAE-6A8B6A241E2B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2AF9E8FB-5B5C-41B7-AAAE-6A8B6A241E2B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F294354B-CC6A-4B1A-B0D2-DAEFB2EEB005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F294354B-CC6A-4B1A-B0D2-DAEFB2EEB005}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F294354B-CC6A-4B1A-B0D2-DAEFB2EEB005}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{F294354B-CC6A-4B1A-B0D2-DAEFB2EEB005}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
