@@ -31,9 +31,9 @@ public partial class StoredProcedures
             SqlParameter ageParam = new SqlParameter();
             ageParam.Direction = ParameterDirection.Input;
             ageParam.ParameterName = "@Age";
-            ageParam.SqlDbType = SqlDbType.Int;
+            ageParam.SqlDbType = SqlDbType.NVarChar;
             ageParam.SqlValue = age;
-            comm.Parameters.Add(age);
+            comm.Parameters.Add(ageParam);
 
             if (age.ToString() == "")
             {
@@ -92,7 +92,7 @@ public partial class StoredProcedures
             nameParam.ParameterName = "@Name";
             nameParam.SqlDbType = SqlDbType.NVarChar;
             nameParam.SqlValue = name;
-            comm.Parameters.Add(name);
+            comm.Parameters.Add(nameParam);
 
             if (name.ToString() == "")
             {
@@ -148,7 +148,7 @@ public partial class StoredProcedures
             nameParam.ParameterName = "@Name";
             nameParam.SqlDbType = SqlDbType.NVarChar;
             nameParam.SqlValue = name;
-            comm.Parameters.Add(name);
+            comm.Parameters.Add(nameParam);
 
             if (name.ToString() == "")
             {
@@ -204,7 +204,7 @@ public partial class StoredProcedures
             nameParam.ParameterName = "@Name";
             nameParam.SqlDbType = SqlDbType.NVarChar;
             nameParam.SqlValue = name;
-            comm.Parameters.Add(name);
+            comm.Parameters.Add(nameParam);
 
             if (name.ToString() == "")
             {
@@ -235,7 +235,7 @@ public partial class StoredProcedures
                 conn.Close();*/
 
                 comm.CommandText = "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, " +
-                                   "CASE WHEN c.ClassID IS NULL THEN 'Ship Maintanance' ELSE cl.ClassDescription END AS 'WorkedFor', " +
+                                   "CASE WHEN c.ClassID IS NULL THEN 'Ship Maintenance' ELSE cl.ClassDescription END AS 'WorkedFor', " +
                                    "c.Job " +
                                    "FROM Crew AS c " +
                                    "LEFT JOIN Class AS cl ON cl.ClassID = c.ClassID ";
@@ -255,7 +255,9 @@ public partial class StoredProcedures
             }
             else
             {
-                comm.CommandText = "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, cl.ClassDescription AS WorkedFor, c.Job AS WorkedAs " +
+                comm.CommandText = "SELECT COALESCE(COALESCE(c.Lastname + ', ', '') + c.Firstname, c.Lastname) AS FullName, " +
+                                   "CASE WHEN c.ClassID IS NULL THEN 'Ship Maintenance' ELSE cl.ClassDescription END AS 'WorkedFor', " +
+                                   "c.Job " +
                                    "FROM Crew AS c " +
                                    "LEFT JOIN Class AS cl ON cl.ClassID = c.ClassID " +
                                    "WHERE c.Lastname = @Name " +
