@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="MalvenProcs\TitanicDatabaseMarcus.publish.xml" />
+    <None Include="TitanicDatabase.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MalvenProcs\Passenger.cs" />
