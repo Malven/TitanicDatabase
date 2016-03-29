@@ -58,6 +58,7 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="MalvenProcs" />
+    <Folder Include="LambrantProcs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -67,10 +68,11 @@
   <ItemGroup>
     <Compile Include="MalvenProcs\MalvenProcs.cs" />
     <Compile Include="MalvenProcs\Crew.cs" />
+    <Compile Include="LambrantProcs\LambrantProcs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MalvenProcs\TitanicDatabaseMarcus.publish.xml" />
-    <None Include="TitanicDatabase.publish.xml" />
+    <None Include="LambrantProcs\TitanicDatabase.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MalvenProcs\Passenger.cs" />
