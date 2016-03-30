@@ -11,5 +11,4 @@ public partial class _Default : System.Web.UI.Page {
         Menu1.DataSource = visibleTables;
         Menu1.DataBind();
     }
-
 }

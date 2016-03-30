@@ -6,9 +6,6 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
     <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server" />
 
-    <h2 class="DDSubHeader">My tables</h2>
-
-    <br /><br />
 
     <asp:GridView ID="Menu1" runat="server" AutoGenerateColumns="false"
         CssClass="DDGridView" RowStyle-CssClass="td" HeaderStyle-CssClass="th" CellPadding="6">
