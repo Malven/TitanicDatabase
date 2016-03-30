@@ -23,8 +23,8 @@ public partial class StoredProcedures
     { 
         Passenger newPassenger = new Passenger(Firstname, Lastname, Age, CabinID, Ticket, TicketPrice, CityID, Job);
 
-        if(newPassenger.CheckInputs())
-            return 0;
+        if(newPassenger.CheckInputs() == false)
+           return 0;
         
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
@@ -61,7 +61,7 @@ public partial class StoredProcedures
     {
         Crew newCrew = new Crew(Firstname, Lastname, Age, DepartmentID, CityID, Job, ClassID);
 
-        if (newCrew.CheckInputs())
+        if (newCrew.CheckInputs() == false)
             return 0;        
 
         using (SqlConnection conn = new SqlConnection("context connection=true"))
