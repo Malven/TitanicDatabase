@@ -22,9 +22,6 @@ public partial class StoredProcedures
     public static SqlInt32 InsertPassenger(SqlString Lastname, SqlString Firstname, SqlString Age, SqlInt32 CabinID, SqlString Ticket, SqlString TicketPrice, SqlInt32 CityID, SqlString Job)
     { 
         Passenger newPassenger = new Passenger(Firstname, Lastname, Age, CabinID, Ticket, TicketPrice, CityID, Job);
-
-        if(newPassenger.CheckInputs() == false)
-           return 0;
         
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
@@ -46,7 +43,7 @@ public partial class StoredProcedures
     }
 
     /// <summary>
-    /// Creates an instance of the Crew class, DepartmentID, ClassID and CityID have default values of 1
+    /// Creates an instance of the Crew class, DepartmentID, ClassID and CityID have default values of 1, age = null
     /// </summary>
     /// <param name="Lastname"></param>
     /// <param name="Firstname"></param>
@@ -60,10 +57,7 @@ public partial class StoredProcedures
     public static SqlInt32 InsertCrew(SqlString Lastname, SqlString Firstname, SqlInt32 Age, SqlInt32 DepartmentID, SqlInt32 CityID, SqlString Job, SqlInt32 ClassID)
     {
         Crew newCrew = new Crew(Firstname, Lastname, Age, DepartmentID, CityID, Job, ClassID);
-
-        if (newCrew.CheckInputs() == false)
-            return 0;        
-
+        
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             SqlCommand comm = new SqlCommand();
